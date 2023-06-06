@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Body, Response, status,HTTPException
 from pydantic import BaseModel
 
 class Student(BaseModel):
@@ -27,7 +27,7 @@ async def root():
     return {"message": "hello from main"}
 
 # get students list
-@app.get("/students")
+@app.get("/students",)
 async def getStudents():
     # return list of students
     return {
@@ -39,19 +39,32 @@ async def getStudents():
 
 # post student
 @app.post("/student")
-async def createStudent(student: Student):
+async def createStudent(student: Student, response: Response):
     # add new student in array of students
     students.append(student)
+    # setting the status code
+    response.status_code=status.HTTP_201_CREATED
     return { "message": "Student " + student.name + " added succesfully "}
 
 # get student by id
-@app.get("/student/{id}")
-async def showStudent(id: int):
-    #find student in the array
-    return students[id-1]
-
+@app.get("/student/{student_id}")
+async def showStudent(student_id: int, response: Response):
+    
+    # check if the student was found
+    try: 
+     #find student in the array
+     student=students[student_id-1]
+     # setting the status code
+     response.status_code=status.HTTP_200_OK
+     return student
+    except:
+      raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="Student was not found"
+      )
+        
 # delete student from list
-@app.delete("/student/{id}")
+@app.delete("/student/{id}", status_code=200)
 async def deleteStudent(id: int):
     #delete student from the list
     students.pop(id)
