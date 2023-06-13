@@ -61,11 +61,34 @@ async def showStudent(student_id: int, response: Response):
       raise HTTPException(
          status.HTTP_404_NOT_FOUND,
          detail="Student was not found"
-      )
-        
+      ) 
+#update student 
+@app.put("/student/{student_id}")
+async def updateStudent(student_id: int, student: Student, response: Response):
+    
+    # check if the student was found
+    try: 
+     #find student in the array and update 
+     students[student_id-1]=student.dict()
+     # setting the status code
+     response.status_code=status.HTTP_200_OK
+     return student
+    except:
+      raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="Student was not found"
+      ) 
+
+
 # delete student from list
 @app.delete("/student/{id}", status_code=200)
 async def deleteStudent(id: int):
     #delete student from the list
-    students.pop(id)
-    return { "message": "Student deleted succesfully"}
+  try:
+     students.pop(id)
+     return { "message": "Student deleted succesfully"}
+  except: 
+     raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="Student was not found"
+      )
