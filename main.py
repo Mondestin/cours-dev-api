@@ -213,18 +213,4 @@ async def deleteUser(id: int):
          status.HTTP_404_NOT_FOUND,
          detail="User was not found"
       )
-# -----------------END OF USERS CRUD---------------------------
-
-
-@app.get("/test")
-async def test(user: User):
-    
-  try:
-     
-    encrypted_data = fernet.encrypt(user.password.encode())
-    return {"encrypted_data": encrypted_data}
-  except: 
-     raise HTTPException(
-         status.HTTP_404_NOT_FOUND,
-         detail="Can't get the password"
-      )
+# -----------------END OF USERS CRUD---------------------------s
