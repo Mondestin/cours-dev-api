@@ -5,11 +5,11 @@ from cryptography.fernet import Fernet
 # Metadata
 tags_metadata = [
     {
-        "name": "Users",
+        "name": "users",
         "description": "Operations with users. The **login** logic is also here.",
     },
     {
-        "name": "Students",
+        "name": "students",
         "description": "Manage students that was register",
     },
 ]
