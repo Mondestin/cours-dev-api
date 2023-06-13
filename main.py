@@ -34,7 +34,7 @@ fernet = Fernet(key)
 
 app= FastAPI(
    title="Yousch API",
-   version="1.0",
+   version="1.2",
    description="Yousch API is a school managment system API",
    openapi_tags=tags_metadata) #variable names for the server
 # app.openapi = my_schema
