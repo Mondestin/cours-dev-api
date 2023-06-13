@@ -32,7 +32,11 @@ class User(BaseModel):
 key = Fernet.generate_key()
 fernet = Fernet(key)
 
-app= FastAPI(openapi_tags=tags_metadata) #variable names for the server
+app= FastAPI(
+   title="Yousch API",
+   version="1.0",
+   description="Yousch API is a school managment system API",
+   openapi_tags=tags_metadata) #variable names for the server
 # app.openapi = my_schema
 
 # init list of students
