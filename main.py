@@ -1,5 +1,19 @@
 from fastapi import FastAPI, Body, Response, status,HTTPException
 from pydantic import BaseModel
+from cryptography.fernet import Fernet
+
+# Metadata
+tags_metadata = [
+    {
+        "name": "Users",
+        "description": "Operations with users. The **login** logic is also here.",
+    },
+    {
+        "name": "Students",
+        "description": "Manage students that was register",
+    },
+]
+
 
 
 # Student Model
@@ -11,14 +25,16 @@ class Student(BaseModel):
 
 # User Model
 class User(BaseModel):
-    id: int
+    # id: int
     name: str
     email: str 
     password: str
 
+# key encryption and decrypt
+key = Fernet.generate_key()
+fernet = Fernet(key)
 
-
-app= FastAPI() #variable names for the server
+app= FastAPI(openapi_tags=tags_metadata) #variable names for the server
 
 # init list of students
 students = [
@@ -57,7 +73,7 @@ async def root():
 
 # -----------------STUDENTS CRUD---------------------------
 # get students list
-@app.get("/students",)
+@app.get("/students",tags=["students"])
 async def getStudents():
     # return list of students
     return {
@@ -126,7 +142,7 @@ async def deleteStudent(id: int):
 
 # -----------------USERS CRUD---------------------------
 # get users list
-@app.get("/users",)
+@app.get("/users",tags=["users"])
 async def getUsers():
     # return list of users
     return {
@@ -140,7 +156,13 @@ async def getUsers():
 @app.post("/user")
 async def createUser(user: User, response: Response):
     # add new user in array of users
-    users.append(user)
+    new_user={
+       "id": len(users)+1,
+       "name": user.name,
+       "email": user.email,
+       "password": fernet.encrypt(user.password.encode())
+    }
+    users.append(new_user)
     # setting the status code
     response.status_code=status.HTTP_201_CREATED
     return { "message": "User " + user.name + " added succesfully "}
@@ -199,9 +221,8 @@ async def test(user: User):
     
   try:
      
-
-
-     return "hashed"
+    encrypted_data = fernet.encrypt(user.password.encode())
+    return {"encrypted_data": encrypted_data}
   except: 
      raise HTTPException(
          status.HTTP_404_NOT_FOUND,
