@@ -88,7 +88,7 @@ async def getStudents():
         }
 
 # post student
-@app.post("/student")
+@app.post("/student", tags=["students"])
 async def createStudent(student: Student, response: Response):
     # add new student in array of students
     students.append(student)
@@ -97,7 +97,7 @@ async def createStudent(student: Student, response: Response):
     return { "message": "Student " + student.name + " added succesfully "}
 
 # get student by id
-@app.get("/student/{student_id}")
+@app.get("/student/{student_id}", tags=["students"])
 async def showStudent(student_id: int, response: Response):
     
     # check if the student was found
@@ -113,7 +113,7 @@ async def showStudent(student_id: int, response: Response):
          detail="Student was not found"
       ) 
 #update student 
-@app.put("/student/{student_id}")
+@app.put("/student/{student_id}", tags=["students"])
 async def updateStudent(student_id: int, student: Student, response: Response):
     
     # check if the student was found
@@ -131,7 +131,7 @@ async def updateStudent(student_id: int, student: Student, response: Response):
 
 
 # delete student from list
-@app.delete("/student/{id}", status_code=200)
+@app.delete("/student/{id}", status_code=200, tags=["students"])
 async def deleteStudent(id: int):
     #delete student from the list
   try:
@@ -157,7 +157,7 @@ async def getUsers():
         }
 
 # post user
-@app.post("/user")
+@app.post("/user",tags=["users"])
 async def createUser(user: User, response: Response):
     # add new user in array of users
     new_user={
@@ -172,7 +172,7 @@ async def createUser(user: User, response: Response):
     return { "message": "User " + user.name + " added succesfully "}
 
 # get user by id
-@app.get("/user/{user_id}")
+@app.get("/user/{user_id}",tags=["users"])
 async def showUser(user_id: int, response: Response):
     
     # check if the user was found
@@ -188,7 +188,7 @@ async def showUser(user_id: int, response: Response):
          detail="User was not found"
       ) 
 #update user 
-@app.put("/user/{user_id}")
+@app.put("/user/{user_id}",tags=["users"])
 async def updateUser(user_id: int, user: User, response: Response):
     
     # check if the user was found
@@ -206,7 +206,7 @@ async def updateUser(user_id: int, user: User, response: Response):
 
 
 # delete user from list
-@app.delete("/user/{id}", status_code=200)
+@app.delete("/user/{id}", status_code=200, tags=["users"])
 async def deleteUser(id: int):
     #delete user from the list
   try:
