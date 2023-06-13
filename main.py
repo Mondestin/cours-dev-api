@@ -1,8 +1,6 @@
 from fastapi import FastAPI, Body, Response, status,HTTPException
 from pydantic import BaseModel
-from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Student Model
 class Student(BaseModel):
@@ -201,9 +199,9 @@ async def test(user: User):
     
   try:
      
-     hashed = pwd_context.hash(user.password)
 
-     return hashed
+
+     return "hashed"
   except: 
      raise HTTPException(
          status.HTTP_404_NOT_FOUND,
