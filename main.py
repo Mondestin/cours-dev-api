@@ -1,10 +1,22 @@
 from fastapi import FastAPI, Body, Response, status,HTTPException
 from pydantic import BaseModel
 
+
+# Student Model
 class Student(BaseModel):
     id: int
     name: str
     email: str 
+
+
+# User Model
+class User(BaseModel):
+    id: int
+    name: str
+    email: str 
+    password: str
+
+
 
 app= FastAPI() #variable names for the server
 
@@ -21,11 +33,29 @@ students = [
     "email": "test-2@yousch.com",
     }
 ]
+
+# init list of students
+users = [
+    {
+    "id": 1,
+    "name": "John user",
+    "email": "john@yousch.com",
+    "password": "hkb@çèè-éè-'(é)"
+    },
+    {
+    "id": 2,
+    "name": "John Doe user",
+    "email": "john-user@yousch.com",
+    "password": "ghé__è'('pjdf@"
+    }
+]
+
 # default route
 @app.get("/")
 async def root():
     return {"message": "hello from main"}
 
+# -----------------STUDENTS CRUD---------------------------
 # get students list
 @app.get("/students",)
 async def getStudents():
@@ -91,4 +121,89 @@ async def deleteStudent(id: int):
      raise HTTPException(
          status.HTTP_404_NOT_FOUND,
          detail="Student was not found"
+      )
+# -----------------END OF STUDENTS CRUD-----------------
+
+# -----------------USERS CRUD---------------------------
+# get users list
+@app.get("/users",)
+async def getUsers():
+    # return list of users
+    return {
+           "users" :users,
+           "limit": 10,
+           "total" : 2,
+           "skip": 0
+        }
+
+# post user
+@app.post("/user")
+async def createUser(user: User, response: Response):
+    # add new user in array of users
+    users.append(user)
+    # setting the status code
+    response.status_code=status.HTTP_201_CREATED
+    return { "message": "User " + user.name + " added succesfully "}
+
+# get user by id
+@app.get("/user/{user_id}")
+async def showUser(user_id: int, response: Response):
+    
+    # check if the user was found
+    try: 
+     #find user in the array
+     user=users[user_id-1]
+     # setting the status code
+     response.status_code=status.HTTP_200_OK
+     return user
+    except:
+      raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="User was not found"
+      ) 
+#update user 
+@app.put("/user/{user_id}")
+async def updateUser(user_id: int, user: User, response: Response):
+    
+    # check if the user was found
+    try: 
+     #find user in the array and update 
+     users[user_id-1]=user.dict()
+     # setting the status code
+     response.status_code=status.HTTP_200_OK
+     return user
+    except:
+      raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="User was not found"
+      ) 
+
+
+# delete user from list
+@app.delete("/user/{id}", status_code=200)
+async def deleteUser(id: int):
+    #delete user from the list
+  try:
+     users.pop(id)
+     return { "message": "User deleted succesfully"}
+  except: 
+     raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="User was not found"
+      )
+# -----------------END OF USERS CRUD---------------------------
+
+
+@app.get("/test")
+async def test(user: User):
+    
+  try:
+     
+
+
+     return "hashed"
+  except: 
+     raise HTTPException(
+         status.HTTP_404_NOT_FOUND,
+         detail="Can't get the password"
       )
