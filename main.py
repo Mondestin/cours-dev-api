@@ -33,7 +33,7 @@ key = Fernet.generate_key()
 fernet = Fernet(key)
 
 app= FastAPI(openapi_tags=tags_metadata) #variable names for the server
-app.openapi = my_schema
+# app.openapi = my_schema
 
 # init list of students
 students = [
