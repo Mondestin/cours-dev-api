@@ -28,10 +28,9 @@ tags_metadata = [
 
 # Student Model
 class Student(BaseModel):
-    id: int
-    name: str
-    email: str 
-    phone: str
+    student_name: str
+    student_email: str 
+    student_phone: str
     is_active: bool
     classe: str
 
@@ -110,57 +109,90 @@ async def getStudents():
 # post student
 @app.post("/student", tags=["students"])
 async def createStudent(student: Student, response: Response):
-    # add new student in array of students
-    students.append(student)
-    # setting the status code
-    response.status_code=status.HTTP_201_CREATED
-    return { "message": "Student " + student.name + " added succesfully "}
+
+    try:
+        # Insert student into the database
+        query= "INSERT INTO students (student_name, student_email, student_phone, is_active, classe) VALUES (%s, %s, %s, %s, %s);"
+        values=(
+            student.student_name,
+            student.student_email,
+            student.student_phone,
+            student.is_active,
+            student.classe
+        )
+        cursor.execute(query, values)
+        connexion.commit()
+        # setting the status code
+        response.status_code=status.HTTP_201_CREATED
+        return { "message": "Student added succesfully "}
+    except: 
+        raise HTTPException(
+              status.HTTP_500_INTERNAL_SERVER_ERROR,
+              detail="INTERNAL SERVER ERROR"
+           )
+    
 
 # get student by id
 @app.get("/student/{student_id}", tags=["students"])
 async def showStudent(student_id: int, response: Response):
     try:
         # Fetch student from the database
-        query = "SELECT * FROM students WHERE student_id = %s"
-        
-        cursor.execute(query, (student_id))
+        cursor.execute(f"SELECT * FROM students WHERE student_id = {student_id}")
         student = cursor.fetchone()
         response.status_code=status.HTTP_200_OK
-        return student_id
+        if(student):
+            return student
+        else: 
+           raise HTTPException(
+              status.HTTP_404_NOT_FOUND,
+              detail="Student was not found"
+           )
     except:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND,
             detail="Student was not found"
         ) 
 
-    
-
-
-
 #update student 
 @app.put("/student/{student_id}", tags=["students"])
 async def updateStudent(student_id: int, student: Student, response: Response):
+    try:
+        values = (
+                    student.student_name,
+                    student.student_email,
+                    student.student_phone,
+                    student.is_active,
+                    student.classe,
+                    student_id
+                )
+        # Fetch student from the database
+        cursor.execute(f"SELECT * FROM students WHERE student_id = {student_id}")
+        student = cursor.fetchone()
     
-    # check if the student was found
-    try: 
-     #find student in the array and update 
-     students[student_id-1]=student.dict()
-     # setting the status code
-     response.status_code=status.HTTP_200_OK
-     return student
+        if(student):
+             cursor.execute("UPDATE students SET student_name = %s, student_email = %s, student_phone = %s, is_active = %s, classe = %s WHERE student_id = %s", values)
+             connexion.commit()
+             return {"message": "Student updated successfully"}
+        else: 
+           raise HTTPException(
+              status.HTTP_404_NOT_FOUND,
+              detail="Student was not found"
+           )
     except:
-      raise HTTPException(
-         status.HTTP_404_NOT_FOUND,
-         detail="Student was not found"
-      ) 
+        raise HTTPException(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="INTERNAL SERVER ERROR"
+        ) 
 
 
 # delete student from list
-@app.delete("/student/{id}", status_code=200, tags=["students"])
-async def deleteStudent(id: int):
+@app.delete("/student/{student_id}", status_code=200, tags=["students"])
+async def deleteStudent(student_id: int):
     #delete student from the list
   try:
-     students.pop(id)
+      # Fetch student from the database
+     cursor.execute("DELETE FROM students WHERE student_id = %s", (student_id,))
+     connexion.commit()
      return { "message": "Student deleted succesfully"}
   except: 
      raise HTTPException(
@@ -168,6 +200,48 @@ async def deleteStudent(id: int):
          detail="Student was not found"
       )
 # -----------------END OF STUDENTS CRUD-----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # -----------------USERS CRUD---------------------------
 # get users list
