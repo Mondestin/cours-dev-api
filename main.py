@@ -1,6 +1,18 @@
 from fastapi import FastAPI, Body, Response, status,HTTPException
 from pydantic import BaseModel
 from cryptography.fernet import Fernet
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+# connection to db
+connexion= psycopg2.connect(
+   host="localhost",
+   database= "youschapi",
+   user= "postgres",
+   password= "API",
+   cursor_factory=RealDictCursor
+)
+cursor=connexion.cursor()
 
 # Metadata
 tags_metadata = [
@@ -81,13 +93,19 @@ async def root():
 # get students list
 @app.get("/students",tags=["students"])
 async def getStudents():
+
+    # Fetch students from the database
+        query = "SELECT * FROM students"
+        cursor.execute(query)
+        students = cursor.fetchall()
+
     # return list of students
-    return {
-           "students" :students,
-           "limit": 10,
-           "total" : 2,
-           "skip": 0
-        }
+        return {
+            "students" :students,
+            "limit": 10,
+            "total" : 2,
+            "skip": 0
+            }
 
 # post student
 @app.post("/student", tags=["students"])
@@ -101,19 +119,24 @@ async def createStudent(student: Student, response: Response):
 # get student by id
 @app.get("/student/{student_id}", tags=["students"])
 async def showStudent(student_id: int, response: Response):
-    
-    # check if the student was found
-    try: 
-     #find student in the array
-     student=students[student_id-1]
-     # setting the status code
-     response.status_code=status.HTTP_200_OK
-     return student
+    try:
+        # Fetch student from the database
+        query = "SELECT * FROM students WHERE student_id = %s"
+        
+        cursor.execute(query, (student_id))
+        student = cursor.fetchone()
+        response.status_code=status.HTTP_200_OK
+        return student_id
     except:
-      raise HTTPException(
-         status.HTTP_404_NOT_FOUND,
-         detail="Student was not found"
-      ) 
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            detail="Student was not found"
+        ) 
+
+    
+
+
+
 #update student 
 @app.put("/student/{student_id}", tags=["students"])
 async def updateStudent(student_id: int, student: Student, response: Response):
