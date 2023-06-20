@@ -19,12 +19,14 @@ class Student(BaseModel):
     id: int
     name: str
     email: str 
-
+    phone: str
+    is_active: bool
+    classe: str
 
 # User Model
 class User(BaseModel):
     # id: int
-    name: str
+    username: str
     email: str 
     password: str
 
