@@ -6,12 +6,13 @@ from psycopg2.extras import RealDictCursor
 
 # connection to db
 connexion= psycopg2.connect(
-   host="localhost",
+   host="dpg-ci8rn3tgkuvmfnsaadag-a.frankfurt-postgres.render.com",
    database= "youschapi",
-   user= "postgres",
-   password= "API",
+   user= "sydney",
+   password= "ojOFrawSkj13fC0vsVFgWMjbFIaetPe5",
    cursor_factory=RealDictCursor
 )
+print("Connected to Database...")
 cursor=connexion.cursor()
 
 # Metadata
