@@ -9,7 +9,7 @@ You will be able to:
 * Create new student.
 * Get students list.
 * Update or delete a student
-* Add student in a class²
+* Add student in a class
 
 ## Classes 
 You'll be able to:

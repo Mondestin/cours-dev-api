@@ -11,6 +11,8 @@ class Student_POST_Body (BaseModel):
     studentIsActive: bool
 
 class Student_PATCH_Body (BaseModel):
+    studentName: str
+    studentSurname: str
     studentIsActive: bool
 
 class Student_GETID_Response(BaseModel): # format de sortie (response)
@@ -39,6 +41,10 @@ class Class_GETID_Response(BaseModel): # format de sortie (response)
 
 # USER
 class User_POST_Body (BaseModel):
+    userEmail:str
+    userPassword: str
+
+class User_PATCH_Body (BaseModel):
     userEmail:str
     userPassword: str
 

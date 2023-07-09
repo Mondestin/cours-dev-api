@@ -10,7 +10,7 @@ router = APIRouter(
     tags=['Students']
 )
 
-# Read
+# get list of students
 @router.get('')
 async def get_students(
     cursor: Session= Depends(get_cursor), 
@@ -36,41 +36,44 @@ async def get_student(student_id:int, cursor:Session= Depends(get_cursor)):
             detail=f"No corresponding Student found with id : {student_id}"
         )
 
-# CREATE / POST 
+# Create student
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_student(payload: schemas_dto.Student_POST_Body, cursor:Session= Depends(get_cursor)):
     new_student = models_orm.Students(name=payload.studentName, surname=payload.studentSurname, is_active=payload.studentIsActive) # build the insert
-    cursor.add(new_student) # Send the query
-    cursor.commit() #Save the staged change
+    cursor.add(new_student) 
+    cursor.commit() 
     cursor.refresh(new_student)
-    return {"message" : f"New watch {new_student.name} added sucessfully with id: {new_student.id}"} 
+    return {"message" : f"New Student {new_student.name} added sucessfully with id: {new_student.id}"} 
 
-# DELETE ? 
-@router.delete('/{student_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_student(student_id:int, cursor:Session=Depends(get_cursor)):
-    # Recherche sur le etudiant existe ? 
+
+
+# Update student
+@router.patch('/{student_id}')
+async def update_student(student_id: int, payload:schemas_dto.Student_PATCH_Body, cursor:Session=Depends(get_cursor)):
+    # find the user in the database
     corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id)
     if(corresponding_student.first()):
-        # Continue to delete
-        corresponding_student.delete() # supprime
-        cursor.commit() # commit the stated changes (changement latent)
-        return
+        # update student info in database using DTO
+        corresponding_student.update({'name':payload.studentName, 'surname':payload.studentSurname, 'is_active':payload.studentIsActive,})
+        cursor.commit()
+        return corresponding_student.first()
     else: 
         raise HTTPException (
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f'Ne corresponding Student with id: {student_id}'
+            detail=f'No corresponding Student with id: {student_id}'
         )
-
-# Update
-@router.patch('/{student_id}')
-async def update_student(student_id: int, payload:schemas_dto.Student_PATCH_Body, cursor:Session=Depends(get_cursor)):
-    # trouver le etudiant correspodant
+    
+# delete student
+@router.delete('/{student_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_student(student_id:int, cursor:Session=Depends(get_cursor)):
+    # check if student exists
     corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id)
+    
+    # delete the first match
     if(corresponding_student.first()):
-        # mise à jour (quoi avec quelle valeur ?) Body -> DTO
-        corresponding_student.update({'featured':payload.newFeatured})
-        cursor.commit()
-        return corresponding_student.first()
+        corresponding_student.delete() # delete the student
+        cursor.commit() # commit the stated changes
+        return {"message" : f"Student was sucessfully deleted"}
     else: 
         raise HTTPException (
             status_code=status.HTTP_404_NOT_FOUND,

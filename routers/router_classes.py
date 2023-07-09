@@ -33,7 +33,7 @@ async def get_class(class_id:int, cursor:Session= Depends(get_cursor)):
     else:
         raise HTTPException (
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No corresponding Class found with id : {class_id}"
+            detail=f"No corresponding class found with id : {class_id}"
         )
 
 # CREATE / POST 
@@ -43,7 +43,7 @@ async def create_class(payload: schemas_dto.Class_POST_Body, cursor:Session= Dep
     cursor.add(new_class) # Send the query
     cursor.commit() #Save the staged change
     cursor.refresh(new_class)
-    return {"message" : f"New watch {new_class.name} added sucessfully with id: {new_class.id}"} 
+    return {"message" : f"New class {new_class.name} added sucessfully with id: {new_class.id}"} 
 
 # DELETE ? 
 @router.delete('/{class_id}', status_code=status.HTTP_204_NO_CONTENT)
