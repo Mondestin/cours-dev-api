@@ -27,7 +27,7 @@ async def get_classes(
 # Read by id
 @router.get('/{class_id}', response_model=schemas_dto.Class_GETID_Response)
 async def get_class(class_id:int, cursor:Session= Depends(get_cursor)):
-    corresponding_class = cursor.query(models_orm.classes).filter(models_orm.classes.id == class_id).first()
+    corresponding_class = cursor.query(models_orm.Classes).filter(models_orm.Classes.id == class_id).first()
     if(corresponding_class):  
         return corresponding_class
     else:
@@ -39,7 +39,7 @@ async def get_class(class_id:int, cursor:Session= Depends(get_cursor)):
 # CREATE / POST 
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_class(payload: schemas_dto.Class_POST_Body, cursor:Session= Depends(get_cursor)):
-    new_class = models_orm.classes(name=payload.className, price=payload.classPrice) # build the insert
+    new_class = models_orm.Classes(name=payload.className, price=payload.classPrice) # build the insert
     cursor.add(new_class) # Send the query
     cursor.commit() #Save the staged change
     cursor.refresh(new_class)
@@ -49,7 +49,7 @@ async def create_class(payload: schemas_dto.Class_POST_Body, cursor:Session= Dep
 @router.delete('/{class_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_class(class_id:int, cursor:Session=Depends(get_cursor)):
     # Recherche sur le etudiant existe ? 
-    corresponding_class = cursor.query(models_orm.classes).filter(models_orm.classes.id == class_id)
+    corresponding_class = cursor.query(models_orm.Classes).filter(models_orm.Classes.id == class_id)
     if(corresponding_class.first()):
         # Continue to delete
         corresponding_class.delete() # supprime
@@ -65,7 +65,7 @@ async def delete_class(class_id:int, cursor:Session=Depends(get_cursor)):
 @router.patch('/{class_id}')
 async def update_class(class_id: int, payload:schemas_dto.Class_PATCH_Body, cursor:Session=Depends(get_cursor)):
     # trouver le etudiant correspodant
-    corresponding_class = cursor.query(models_orm.classes).filter(models_orm.classes.id == class_id)
+    corresponding_class = cursor.query(models_orm.Classes).filter(models_orm.Classes.id == class_id)
     if(corresponding_class.first()):
         # mise à jour (quoi avec quelle valeur ?) Body -> DTO
         corresponding_class.update({'featured':payload.newFeatured})

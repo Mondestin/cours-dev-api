@@ -27,7 +27,7 @@ async def get_students(
 # Read by id
 @router.get('/{student_id}', response_model=schemas_dto.Student_GETID_Response)
 async def get_student(student_id:int, cursor:Session= Depends(get_cursor)):
-    corresponding_student = cursor.query(models_orm.students).filter(models_orm.students.id == student_id).first()
+    corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id).first()
     if(corresponding_student):  
         return corresponding_student
     else:
@@ -39,7 +39,7 @@ async def get_student(student_id:int, cursor:Session= Depends(get_cursor)):
 # CREATE / POST 
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_student(payload: schemas_dto.Student_POST_Body, cursor:Session= Depends(get_cursor)):
-    new_student = models_orm.students(name=payload.studentName, price=payload.studentPrice) # build the insert
+    new_student = models_orm.Students(name=payload.studentName, surname=payload.studentSurname, is_active=payload.studentIsActive) # build the insert
     cursor.add(new_student) # Send the query
     cursor.commit() #Save the staged change
     cursor.refresh(new_student)
@@ -49,7 +49,7 @@ async def create_student(payload: schemas_dto.Student_POST_Body, cursor:Session=
 @router.delete('/{student_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_student(student_id:int, cursor:Session=Depends(get_cursor)):
     # Recherche sur le etudiant existe ? 
-    corresponding_student = cursor.query(models_orm.students).filter(models_orm.students.id == student_id)
+    corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id)
     if(corresponding_student.first()):
         # Continue to delete
         corresponding_student.delete() # supprime
@@ -65,7 +65,7 @@ async def delete_student(student_id:int, cursor:Session=Depends(get_cursor)):
 @router.patch('/{student_id}')
 async def update_student(student_id: int, payload:schemas_dto.Student_PATCH_Body, cursor:Session=Depends(get_cursor)):
     # trouver le etudiant correspodant
-    corresponding_student = cursor.query(models_orm.students).filter(models_orm.students.id == student_id)
+    corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id)
     if(corresponding_student.first()):
         # mise à jour (quoi avec quelle valeur ?) Body -> DTO
         corresponding_student.update({'featured':payload.newFeatured})
