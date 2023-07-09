@@ -6,7 +6,7 @@ Base= declarative_base()
 
 # Les ORM sont des classes python basée sur les tables de notre base de données
 class Students(Base):
-    __tablename__= "student"
+    __tablename__= "students"
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
@@ -14,14 +14,14 @@ class Students(Base):
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  #now() représente la date/time actuelle
 
 class Users(Base):
-    __tablename__="user"
+    __tablename__="users"
     id = Column(Integer, primary_key=True, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     create_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
 class Classes(Base):
-    __tablename__="class"
+    __tablename__="classes"
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False, unique=True)
     level = Column(String, nullable=False)
