@@ -21,7 +21,7 @@ async def list_relations(
     token: Annotated[str, Depends(oauth2_scheme)], 
     cursor: Session = Depends(get_cursor)):
     #   get all relations between students and classes
-        all_relations = cursor.query(models_orm.student_class_association).all()
+        all_relations = cursor.query(models_orm.Student_class_association).all()
         return all_relations 
 
 
@@ -37,7 +37,7 @@ async def create_relation(
     cursor: Session = Depends(get_cursor)
     ):
     
-    new_relation= models_orm.student_class_association(student_id=payload.student_id, class_id=payload.class_id)
+    new_relation= models_orm.Student_class_association(student_id=payload.student_id, class_id=payload.class_id)
     try : 
         cursor.add(new_relation)
         cursor.commit()
