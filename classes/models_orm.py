@@ -51,7 +51,7 @@ class Role(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    
     # bind roles and User
     user = relationship("User", back_populates="roles")
   
