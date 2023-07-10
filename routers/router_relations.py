@@ -42,7 +42,7 @@ async def create_relation(
         cursor.add(new_relation)
         cursor.commit()
         cursor.refresh(new_relation)
-        return {'message' : f'New relation added successfully' }
+        return {'message' : f'New relation was added successfully' }
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
