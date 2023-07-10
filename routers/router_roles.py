@@ -17,7 +17,7 @@ router = APIRouter(
 # get roles
 @router.get('')
 async def get_roles(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    # token: Annotated[str, Depends(oauth2_scheme)],
     cursor: Session= Depends(get_cursor), 
     limit:int=10, offset:int=0):
     all_roles = cursor.query(models_orm.Roles).limit(limit).offset(offset).all() # Lancement de la requête
@@ -31,7 +31,7 @@ async def get_roles(
 
 # create role 
 @router.post('', status_code=status.HTTP_201_CREATED)
-async def create_role(token: Annotated[str, Depends(oauth2_scheme)], payload: schemas_dto.Role_POST_Body, cursor:Session= Depends(get_cursor)):
+async def create_role( payload: schemas_dto.Role_POST_Body, cursor:Session= Depends(get_cursor)):
     new_role = models_orm.Roles(name=payload.roleName) # build the insert
     cursor.add(new_role) # Send the query
     cursor.commit() #Save the staged change

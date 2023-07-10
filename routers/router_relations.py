@@ -5,7 +5,7 @@ from classes.database import get_cursor
 from classes import models_orm
 import utilities
 from sqlalchemy.exc import IntegrityError
-
+from fastapi.encoders import jsonable_encoder
 from pydantic.typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
@@ -15,15 +15,21 @@ router= APIRouter(
     prefix="/relations",
     tags=["Relations"]
 )
-# list of students links to classes
+# API endpoint to retrieve all relationships between students and classes
 @router.get('')
-async def list_relations(
-    # token: Annotated[str, Depends(oauth2_scheme)], 
-    cursor: Session = Depends(get_cursor)):
-    #   get all relations between students and classes
-        all_relations = cursor.query(models_orm.student_class_association).all()
-        return all_relations 
-
+async def list_relations(cursor: Session = Depends(get_cursor)):
+    # Get all relations between students and classes
+    all_relations = cursor.query(models_orm.student_class_association).all()
+    # Convert relations to dictionaries
+    relations_dict = [
+        {
+            'student_id': relation.student_id,
+            'class_id': relation.class_id,
+            'created_at': relation.created_at
+        }
+        for relation in all_relations
+    ]
+    return jsonable_encoder(relations_dict)
 
 class Relation_post(BaseModel):
     student_id:int
