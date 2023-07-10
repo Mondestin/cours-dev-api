@@ -15,7 +15,6 @@ class Student_class_association (Base):
     Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
 
 
-
 # Les ORM sont des classes python basée sur les tables de notre base de données
 class Students(Base):
     __tablename__= "students"
@@ -26,7 +25,7 @@ class Students(Base):
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  #now() représente la date/time actuelle
 
     # Many-to-Many relationship
-    # classes = relationship("Class", secondary=student_class_association, back_populates="students")
+    classes = relationship("Class", secondary=Student_class_association.__table__, back_populates="students")
 
 class Classes(Base):
     __tablename__="classes"
@@ -36,7 +35,7 @@ class Classes(Base):
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
     # Many-to-Many relationship
-    # students = relationship("Student", secondary=student_class_association, back_populates="classes")
+    students = relationship("Student", secondary=Student_class_association.__table__, back_populates="classes")
 
 class Users(Base):
     __tablename__="users"
