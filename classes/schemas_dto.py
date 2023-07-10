@@ -52,7 +52,7 @@ class User_PATCH_Body (BaseModel):
 class User_response (BaseModel): 
     id: int
     email:str
-    create_at: datetime
+    created_at: datetime
     # not sending the password
     class Config: # Importante pour la traduction ORM -> DTO
         orm_mode= True  
