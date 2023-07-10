@@ -12,7 +12,7 @@ student_class_association = Table(
     Base.metadata,
     Column('student_id', Integer, ForeignKey('students.id')),
     Column('class_id', Integer, ForeignKey('classes.id')),
-    created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
+    Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
 
 )
 
@@ -33,7 +33,7 @@ class Classes(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False, unique=True)
     level = Column(String, nullable=False)
-    create_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
+    created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
     # Many-to-Many relationship
     students = relationship("Student", secondary=student_class_association, back_populates="classes")
@@ -43,7 +43,7 @@ class Users(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
-    create_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
+    created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
     # bind user and role
     roles = relationship("Role", back_populates="user")
 

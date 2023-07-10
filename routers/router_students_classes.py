@@ -17,7 +17,7 @@ router= APIRouter(
 )
 
 @router.get('')
-async def list_transactions(
+async def list_relations(
     token: Annotated[str, Depends(oauth2_scheme)], 
     cursor: Session = Depends(get_cursor)):
     #   get all relations between students and classes
@@ -30,7 +30,7 @@ class relation_post(BaseModel):
     class_id:int
 
 @router.post('', status_code=status.HTTP_201_CREATED)
-async def create_transaction(
+async def create_relation(
     token: Annotated[str, Depends(oauth2_scheme)], 
     payload:relation_post,
     cursor: Session = Depends(get_cursor)
