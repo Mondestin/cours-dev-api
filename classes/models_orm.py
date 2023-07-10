@@ -26,7 +26,7 @@ class Students(Base):
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  #now() représente la date/time actuelle
 
     # Many-to-Many relationship
-    classes = relationship("Class", secondary=student_class_association, back_populates="students")
+    # classes = relationship("Class", secondary=student_class_association, back_populates="students")
 
 class Classes(Base):
     __tablename__="classes"
@@ -36,7 +36,7 @@ class Classes(Base):
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
     # Many-to-Many relationship
-    students = relationship("Student", secondary=student_class_association, back_populates="classes")
+    # students = relationship("Student", secondary=student_class_association, back_populates="classes")
 
 class Users(Base):
     __tablename__="users"
