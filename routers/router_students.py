@@ -5,6 +5,10 @@ from sqlalchemy.orm import Session
 from classes.database import get_cursor
 from classes import models_orm, schemas_dto
 
+from pydantic.typing import Annotated
+from fastapi.security import OAuth2PasswordBearer
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
+
 router = APIRouter(
     prefix='/students',
     tags=['Students']
@@ -49,7 +53,7 @@ async def create_student(payload: schemas_dto.Student_POST_Body, cursor:Session=
 
 # Update student
 @router.patch('/{student_id}')
-async def update_student(student_id: int, payload:schemas_dto.Student_PATCH_Body, cursor:Session=Depends(get_cursor)):
+async def update_student(token: Annotated[str, Depends(oauth2_scheme)], student_id: int, payload:schemas_dto.Student_PATCH_Body, cursor:Session=Depends(get_cursor)):
     # find the user in the database
     corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id)
     if(corresponding_student.first()):
@@ -65,7 +69,7 @@ async def update_student(student_id: int, payload:schemas_dto.Student_PATCH_Body
     
 # delete student
 @router.delete('/{student_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_student(student_id:int, cursor:Session=Depends(get_cursor)):
+async def delete_student(token: Annotated[str, Depends(oauth2_scheme)], student_id:int, cursor:Session=Depends(get_cursor)):
     # check if student exists
     corresponding_student = cursor.query(models_orm.Students).filter(models_orm.Students.id == student_id)
     

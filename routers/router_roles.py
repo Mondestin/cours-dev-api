@@ -16,7 +16,7 @@ router = APIRouter(
 
 # get roles
 @router.get('')
-async def get_rolees(
+async def get_roles(
     token: Annotated[str, Depends(oauth2_scheme)],
     cursor: Session= Depends(get_cursor), 
     limit:int=10, offset:int=0):

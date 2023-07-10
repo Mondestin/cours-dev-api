@@ -5,6 +5,10 @@ from sqlalchemy.orm import Session
 from classes.database import get_cursor
 from classes import models_orm, schemas_dto
 
+from pydantic.typing import Annotated
+from fastapi.security import OAuth2PasswordBearer
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
+
 router = APIRouter(
     prefix='/classes',
     tags=['Classes']
@@ -47,7 +51,7 @@ async def create_class(payload: schemas_dto.Class_POST_Body, cursor:Session= Dep
 
 # DELETE ? 
 @router.delete('/{class_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_class(class_id:int, cursor:Session=Depends(get_cursor)):
+async def delete_class(token: Annotated[str, Depends(oauth2_scheme)], class_id:int, cursor:Session=Depends(get_cursor)):
     # Recherche sur le etudiant existe ? 
     corresponding_class = cursor.query(models_orm.Classes).filter(models_orm.Classes.id == class_id)
     if(corresponding_class.first()):
@@ -63,7 +67,7 @@ async def delete_class(class_id:int, cursor:Session=Depends(get_cursor)):
 
 # Update
 @router.patch('/{class_id}')
-async def update_class(class_id: int, payload:schemas_dto.Class_PATCH_Body, cursor:Session=Depends(get_cursor)):
+async def update_class(token: Annotated[str, Depends(oauth2_scheme)], class_id: int, payload:schemas_dto.Class_PATCH_Body, cursor:Session=Depends(get_cursor)):
     # trouver le etudiant correspodant
     corresponding_class = cursor.query(models_orm.Classes).filter(models_orm.Classes.id == class_id)
     if(corresponding_class.first()):
