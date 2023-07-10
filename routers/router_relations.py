@@ -18,10 +18,10 @@ router= APIRouter(
 # list of students links to classes
 @router.get('')
 async def list_relations(
-    token: Annotated[str, Depends(oauth2_scheme)], 
+    # token: Annotated[str, Depends(oauth2_scheme)], 
     cursor: Session = Depends(get_cursor)):
     #   get all relations between students and classes
-        all_relations = cursor.query(models_orm.Student_class_association).all()
+        all_relations = cursor.query(models_orm.student_class_association).all()
         return all_relations 
 
 
@@ -29,20 +29,14 @@ class Relation_post(BaseModel):
     student_id:int
     class_id:int
 
-# link a student with a class
+# API endpoint to link a student with a class
 @router.post('', status_code=status.HTTP_201_CREATED)
-async def create_relation(
-    token: Annotated[str, Depends(oauth2_scheme)], 
-    payload:Relation_post,
-    cursor: Session = Depends(get_cursor)
-    ):
-    
-    new_relation= models_orm.Student_class_association(student_id=payload.student_id, class_id=payload.class_id)
-    try : 
-        cursor.add(new_relation)
+async def create_relation(payload: Relation_post, cursor: Session = Depends(get_cursor)):
+    new_relation = models_orm.student_class_association.insert().values(student_id=payload.student_id, class_id=payload.class_id)
+    try:
+        cursor.execute(new_relation)
         cursor.commit()
-        cursor.refresh(new_relation)
-        return {'message' : f'New relation was added successfully' }
+        return {'message': 'New relation was added successfully'}
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
