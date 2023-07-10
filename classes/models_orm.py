@@ -45,7 +45,7 @@ class Users(Base):
     password = Column(String, nullable=False)
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
     # bind user and role
-    roles = relationship("Role", back_populates="user")
+    # roles = relationship("Role", back_populates="user")
 
 class Roles(Base):
     __tablename__ = 'roles'
@@ -53,7 +53,7 @@ class Roles(Base):
     name = Column(String, unique=True, index=True)
     
     # bind roles and User
-    user = relationship("User", back_populates="roles")
+    # user = relationship("User", back_populates="roles")
   
     
     
