@@ -9,11 +9,13 @@ class Student_POST_Body (BaseModel):
     studentName: str
     studentSurname: str
     studentIsActive: bool
+    studentClass: int
 
 class Student_PATCH_Body (BaseModel):
     studentName: str
     studentSurname: str
     studentIsActive: bool
+    studentClass: int
 
 class Student_GETID_Response(BaseModel): # format de sortie (response)
     id: int

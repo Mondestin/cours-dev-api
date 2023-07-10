@@ -10,12 +10,12 @@ from pydantic.typing import Annotated
 from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth")
 
-
+# router
 router= APIRouter(
-    prefix="/students/classes",
-    tags=["RelationsStudents"]
+    prefix="/relations",
+    tags=["Relations"]
 )
-
+# list of students links to classes
 @router.get('')
 async def list_relations(
     token: Annotated[str, Depends(oauth2_scheme)], 
@@ -29,6 +29,7 @@ class relation_post(BaseModel):
     student_id:int
     class_id:int
 
+# link a student with a class
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_relation(
     token: Annotated[str, Depends(oauth2_scheme)], 
@@ -41,7 +42,7 @@ async def create_relation(
         cursor.add(new_relation)
         cursor.commit()
         cursor.refresh(new_relation)
-        return {'message' : f'New relation added successéfully' }
+        return {'message' : f'New relation added successfully' }
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
