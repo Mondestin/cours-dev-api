@@ -11,7 +11,6 @@ router = APIRouter(
     tags=["Auth"]
 )
 
-
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def auth_user(
         payload : OAuth2PasswordRequestForm= Depends(), 
@@ -24,7 +23,7 @@ async def auth_user(
     if(not corresponding_user):
          raise HTTPException(
              status_code=status.HTTP_404_NOT_FOUND,
-             detail='email not good'
+             detail='User email not good'
          )
     # 3. Vérif sur passwork hashé (Bad practice (normalement 404 dans les deux cas))
     valid_pwd = utilities.verify_password(
@@ -34,7 +33,7 @@ async def auth_user(
     if(not valid_pwd):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='password not good' 
+            detail='Invalid password' 
         ) 
     # 4. Génération du JWT
     token = utilities.generate_token(corresponding_user.id)

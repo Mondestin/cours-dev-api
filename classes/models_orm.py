@@ -1,8 +1,20 @@
-from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, Numeric
+from sqlalchemy import TIMESTAMP, Boolean, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
+
 
 # Class de base pour créer les models
 Base= declarative_base()
+
+# Intermediate table for the many-to-many relationship
+student_class_association = Table(
+    'student_class_association',
+    Base.metadata,
+    Column('student_id', Integer, ForeignKey('students.id')),
+    Column('class_id', Integer, ForeignKey('classes.id')),
+    created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
+
+)
 
 # Les ORM sont des classes python basée sur les tables de notre base de données
 class Students(Base):
@@ -13,12 +25,8 @@ class Students(Base):
     is_active = Column(Boolean, nullable=True, server_default='TRUE') # server_default permet de donner une valeur par default
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  #now() représente la date/time actuelle
 
-class Users(Base):
-    __tablename__="users"
-    id = Column(Integer, primary_key=True, nullable=False)
-    email = Column(String, nullable=False, unique=True)
-    password = Column(String, nullable=False)
-    create_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
+    # Many-to-Many relationship
+    classes = relationship("Class", secondary=student_class_association, back_populates="students")
 
 class Classes(Base):
     __tablename__="classes"
@@ -27,11 +35,22 @@ class Classes(Base):
     level = Column(String, nullable=False)
     create_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
+    # Many-to-Many relationship
+    students = relationship("Student", secondary=student_class_association, back_populates="classes")
 
+class Users(Base):
+    __tablename__="users"
+    id = Column(Integer, primary_key=True, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    create_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
+    # bind user and role
+    roles = relationship("Role", back_populates="user")
 
-# class Transactions(Base):
-#     __tablename__="transaction"
-#     id= Column(Integer, primary_key=True, nullable=False)
-#     customer_id= Column(Integer, ForeignKey("customer.id", ondelete="RESTRICT"), nullable=False)  # Les Foreign Keys sont basés sur les clé principales des autres tables mais ce n'est pas obligatoire
-#     product_id = Column(Integer, ForeignKey("product.id", ondelete="RESTRICT"), nullable=False) # ondelete permet de choisir la cascade d'action suite à la suppression (supprimer une transation, doit-elle suppimer le customer ou le produit?)
-#     transaction_date=Column(TIMESTAMP(timezone=True), nullable=False, server_default="now()")
+class Role(Base):
+    __tablename__ = 'roles'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    # bind roles and User
+    user = relationship("User", back_populates="roles")

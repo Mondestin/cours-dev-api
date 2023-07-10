@@ -16,4 +16,8 @@ tags_metadata = [
         "name": "Classes",
         "description": "Create and list classes of our API",
     },
+    {
+        "name": "RelationsStudents",
+        "description": "Create relation between student an class",
+    },
 ]
