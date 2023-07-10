@@ -7,14 +7,12 @@ from sqlalchemy.orm import relationship
 Base= declarative_base()
 
 # Intermediate table for the many-to-many relationship
-student_class_association = Table(
-    'student_class_association',
-    Base.metadata,
+class student_class_association (Base):
     Column('student_id', Integer, ForeignKey('students.id')),
     Column('class_id', Integer, ForeignKey('classes.id')),
     Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
 
-)
+
 
 # Les ORM sont des classes python basée sur les tables de notre base de données
 class Students(Base):
