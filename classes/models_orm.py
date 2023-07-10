@@ -7,7 +7,9 @@ from sqlalchemy.orm import relationship
 Base= declarative_base()
 
 # Intermediate table for the many-to-many relationship
-class student_class_association (Base):
+class Student_class_association (Base):
+    __tablename__= "student_class_association"
+    id = Column(Integer, primary_key=True, nullable=False)
     Column('student_id', Integer, ForeignKey('students.id')),
     Column('class_id', Integer, ForeignKey('classes.id')),
     Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
