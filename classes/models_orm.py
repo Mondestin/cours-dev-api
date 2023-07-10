@@ -7,13 +7,13 @@ from sqlalchemy.orm import relationship
 Base= declarative_base()
 
 # Intermediate table for the many-to-many relationship
-class Student_class_association (Base):
-    __tablename__= "student_class_association"
-    id = Column(Integer, primary_key=True, nullable=False)
+student_class_association = Table(
+    'student_class_association',
+    Base.metadata,
     Column('student_id', Integer, ForeignKey('students.id')),
     Column('class_id', Integer, ForeignKey('classes.id')),
-    Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()') 
-
+    Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()')
+)
 
 # Les ORM sont des classes python basée sur les tables de notre base de données
 class Students(Base):
@@ -24,8 +24,14 @@ class Students(Base):
     is_active = Column(Boolean, nullable=True, server_default='TRUE') # server_default permet de donner une valeur par default
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  #now() représente la date/time actuelle
 
-    # Many-to-Many relationship
-    classes = relationship("Class", secondary=Student_class_association.__table__, back_populates="students")
+        # Many-to-Many relationship
+    classes = relationship(
+        "Classes",
+        secondary=student_class_association,
+        back_populates="students",
+        primaryjoin=id == student_class_association.c.student_id,
+        secondaryjoin=id == student_class_association.c.class_id
+    )
 
 class Classes(Base):
     __tablename__="classes"
@@ -34,8 +40,14 @@ class Classes(Base):
     level = Column(String, nullable=False)
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
-    # Many-to-Many relationship
-    students = relationship("Student", secondary=Student_class_association.__table__, back_populates="classes")
+      # Many-to-Many relationship
+    students = relationship(
+        "Students",
+        secondary=student_class_association,
+        back_populates="classes",
+        primaryjoin=id == student_class_association.c.class_id,
+        secondaryjoin=id == student_class_association.c.student_id
+    )
 
 class Users(Base):
     __tablename__="users"

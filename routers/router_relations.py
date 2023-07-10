@@ -25,7 +25,7 @@ async def list_relations(
         return all_relations 
 
 
-class relation_post(BaseModel):
+class Relation_post(BaseModel):
     student_id:int
     class_id:int
 
@@ -33,7 +33,7 @@ class relation_post(BaseModel):
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_relation(
     token: Annotated[str, Depends(oauth2_scheme)], 
-    payload:relation_post,
+    payload:Relation_post,
     cursor: Session = Depends(get_cursor)
     ):
     
