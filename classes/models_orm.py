@@ -47,7 +47,7 @@ class Users(Base):
     # bind user and role
     roles = relationship("Role", back_populates="user")
 
-class Role(Base):
+class Roles(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)

@@ -4,7 +4,7 @@ tags_metadata = [
         "name": "Students",
         "description": "Manage Students. So _fancy_ they have their own docs.",
         "externalDocs": {
-            "description": "Items external docs",
+            "description": "Find more in this external docs",
             "url": "https://fastapi.tiangolo.com/",
         },
     },
@@ -19,5 +19,9 @@ tags_metadata = [
     {
         "name": "Relations",
         "description": "Create relation between student an class",
+    },
+     {
+        "name": "Roles",
+        "description": "Manage roles",
     },
 ]

@@ -56,5 +56,17 @@ class User_response (BaseModel):
     create_at: datetime
     # not sending the password
     class Config: # Importante pour la traduction ORM -> DTO
+        orm_mode= True  
+
+# Role
+class Role_POST_Body (BaseModel):
+    roleName:str
+
+class Role_PATCH_Body (BaseModel):
+    roleName:str
+
+class Role_response (BaseModel): 
+    id: int
+    name:str
+    class Config: # Importante pour la traduction ORM -> DTO
         orm_mode= True      
-        
