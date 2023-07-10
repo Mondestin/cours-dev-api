@@ -9,6 +9,7 @@ print("Connected to Database...")
 # set cursor
 SessionTemplate = sessionmaker(bind=database_engine, autocommit=False, autoflush=False)
 
+
 def get_cursor():
     db= SessionTemplate()
     try:

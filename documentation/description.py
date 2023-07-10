@@ -25,4 +25,17 @@ You'll be able to:
 * Register new users
 * update or delete a user
 * change user's role
+
+## Relations
+You'll be able to:
+
+* create a new relation between student a class
+* update or delete a relation
+
+## Roles
+You'll be able to:
+
+* create a new role
+* update or delete a role
+
 """
