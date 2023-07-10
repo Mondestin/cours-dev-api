@@ -22,6 +22,7 @@ app= FastAPI(
     openapi_tags=tags_metadata 
     )
 
+
 # Set routes
 app.include_router(routers.router_students.router)
 app.include_router(routers.router_users.router)

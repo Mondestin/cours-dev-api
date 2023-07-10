@@ -54,3 +54,6 @@ class Role(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     # bind roles and User
     user = relationship("User", back_populates="roles")
+  
+    
+    
