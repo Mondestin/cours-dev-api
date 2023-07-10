@@ -15,6 +15,15 @@ student_class_association = Table(
     Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()')
 )
 
+# Intermediate table for the many-to-many relationship
+user_role_association = Table(
+    'user_role_association',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('role_id', Integer, ForeignKey('roles.id')),
+    Column('created_at', TIMESTAMP(timezone=True), nullable=False, server_default='now()')
+)
+
 # Les ORM sont des classes python basée sur les tables de notre base de données
 class Students(Base):
     __tablename__= "students"
@@ -55,16 +64,29 @@ class Users(Base):
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
-    # bind user and role
-    # roles = relationship("Role", back_populates="user")
+
+      # Many-to-Many relationship
+    roles = relationship(
+        "Roles",
+        secondary=user_role_association,
+        back_populates="users",
+        primaryjoin=id == user_role_association.c.user_id,
+        secondaryjoin=id == user_role_association.c.role_id
+    )
 
 class Roles(Base):
     __tablename__ = 'roles'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     
-    # bind roles and User
-    # user = relationship("User", back_populates="roles")
+    # Many-to-Many relationship
+    users = relationship(
+        "Users",
+        secondary=user_role_association,
+        back_populates="roles",
+        primaryjoin=id == user_role_association.c.role_id,
+        secondaryjoin=id == user_role_association.c.user_id
+    )
   
     
     

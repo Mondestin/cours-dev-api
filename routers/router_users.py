@@ -5,7 +5,8 @@ from classes.database import get_cursor
 from classes import models_orm, schemas_dto, database
 import utilities
 from typing import List
-
+from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
 # Ajout du schema Oauth sur un endpoint précis (petit cadenas)
 # Le boutton "Authorize" ouvre un formulaire en popup pour capturer les credentials
 from pydantic.typing import Annotated
@@ -90,4 +91,41 @@ async def delete_user(token: Annotated[str, Depends(oauth2_scheme)], user_id:int
         raise HTTPException (
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f'No corresponding user with id: {user_id}'
+        )
+class Role_Relation_post(BaseModel):
+    user_id:int
+    role_id:int
+
+# link a student with a class
+@router.post('/roles', status_code=status.HTTP_201_CREATED)
+async def add_user_role(payload: Role_Relation_post, cursor: Session = Depends(get_cursor)):
+    new_relation = models_orm.user_role_association.insert().values(user_id=payload.user_id, role_id=payload.role_id)
+    try:
+        cursor.execute(new_relation)
+        cursor.commit()
+        return {'message': 'New role was added successfully'}
+    except IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Error while creating adding role to a user'
+        )
+# retrieve roles for a user
+@router.get('/roles/{user_id}')
+async def retrieve_user_roles(user_id: int, cursor: Session = Depends(get_cursor)):
+    user = cursor.query(models_orm.user_role_association).filter(models_orm.user_role_association.c.user_id == user_id).all()
+    if user:
+        # Convert relations to dictionaries
+        relations_dict = [
+            {
+                'user_id': relation.user_id,
+                'role_id': relation.role_id,
+                'created_at': relation.created_at
+            }
+            for relation in user
+        ]
+        return jsonable_encoder(relations_dict)
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='User not found'
         )
