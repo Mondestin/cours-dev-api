@@ -31,7 +31,7 @@ class Students(Base):
 class Classes(Base):
     __tablename__="classes"
     id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=False)
     level = Column(String, nullable=False)
     created_at= Column(TIMESTAMP(timezone=True), nullable=False, server_default='now()')  
 
