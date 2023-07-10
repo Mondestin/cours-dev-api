@@ -43,7 +43,7 @@ async def get_class(class_id:int, cursor:Session= Depends(get_cursor)):
 # CREATE / POST 
 @router.post('', status_code=status.HTTP_201_CREATED)
 async def create_class(payload: schemas_dto.Class_POST_Body, cursor:Session= Depends(get_cursor)):
-    new_class = models_orm.Classes(name=payload.className, price=payload.classPrice) # build the insert
+    new_class = models_orm.Classes(name=payload.className, level=payload.classLevel) # build the insert
     cursor.add(new_class) # Send the query
     cursor.commit() #Save the staged change
     cursor.refresh(new_class)
@@ -72,7 +72,7 @@ async def update_class(token: Annotated[str, Depends(oauth2_scheme)], class_id: 
     corresponding_class = cursor.query(models_orm.Classes).filter(models_orm.Classes.id == class_id)
     if(corresponding_class.first()):
         # mise à jour (quoi avec quelle valeur ?) Body -> DTO
-        corresponding_class.update({'featured':payload.newFeatured})
+        corresponding_class.update({'name':payload.className, 'level':payload.classLevel})
         cursor.commit()
         return corresponding_class.first()
     else: 
