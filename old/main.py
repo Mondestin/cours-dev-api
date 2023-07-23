@@ -9,7 +9,7 @@ connexion= psycopg2.connect(
    host="dpg-ci8rn3tgkuvmfnsaadag-a.frankfurt-postgres.render.com",
    database= "youschapi",
    user= "sydney",
-   password= "ojOFrawSkj13fC0vsVFgWMjbFIaetPe5",
+   password= "",
    cursor_factory=RealDictCursor
 )
 print("Connected to Database...")
